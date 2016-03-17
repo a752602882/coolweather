@@ -1,10 +1,12 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import db.CoolWeatherOpenHelper;
-import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -53,6 +55,8 @@ public class CoolWeatherDB {
 	/**
 	* 将Province实例存储到数据库。
 	*/
+	
+	
 	public void saveProvince(Province province){
 		
 		if (province !=null) {
@@ -76,7 +80,7 @@ public class CoolWeatherDB {
 				Province province = new Province();
 				province.setId(cursor.getInt(cursor.getColumnIndex("id")));
 				province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_code")));
-				province.setProvinceCode(cursor.getString(cursor.getColumnIndex("province_name")));
+				province.setProvinceName(cursor.getString(cursor.getColumnIndex("province_name")));
 			    list.add(province);
 				
 			} while (cursor.moveToNext());
@@ -93,9 +97,12 @@ public class CoolWeatherDB {
 		
 		if (city !=null) {
 			ContentValues values = new ContentValues();
-			values.put("city_name", city.getCityName());
-			values.put("city_code", city.getCityCode());
-			values.put("province_id", city.getProvinceId());
+			values.put("province_cn", city.getProvince_cn());
+			values.put("district_cn", city.getDistrict_cn());
+			values.put("name_cn", city.getName_cn());
+			values.put("name_en", city.getName_en());
+			values.put("area_id", city.getArea_id());
+			
 			db.insert("City", null, values);
 		}
 	}
@@ -103,21 +110,37 @@ public class CoolWeatherDB {
 	/**
 	* 从数据库读取某省下所有的城市信息。
 	*/
-	public List<City> loadCities(int provinceId){
+	public List<City> loadCities(String province_cn){
 		List<City> list = new ArrayList<City>();
-		Cursor cursor = db.query("City", null, "province_id =?",
-				new String[] { String.valueOf(provinceId) },null,null,null);
+		Cursor cursor = db.query("City", null, "province_cn =?",
+				new String[] { String.valueOf(province_cn) },null,null,null);
 		if (cursor.moveToNext()) {
 			do {
 				
 				City city = new City();
 				city.setId(cursor.getInt(cursor.getColumnIndex("id")));
-				city.setProvinceId(provinceId);
-				city.setCityName(cursor.getString(cursor.getColumnIndex("city_name")));
-				city.setCityCode(cursor.getString(cursor.getColumnIndex("city_code")));
+				city.setProvince_cn(province_cn);
+				city.setDistrict_cn(cursor.getString(cursor.getColumnIndex("district_cn")));
+				city.setName_cn(cursor.getString(cursor.getColumnIndex("name_cn")));
+				city.setName_en(cursor.getString(cursor.getColumnIndex("name_en")));
+				city.setArea_id(cursor.getInt(cursor.getColumnIndex("area_id")));
 				list.add(city);
 			} while (cursor.moveToNext());
 		}
+		
+		for (int i = 0; i < list.size()-1; i++)  //外循环是循环的次数
+        {
+            for (int j = list.size() - 1 ; j > i; j--)  //内循环是 外循环一次比较的次数
+            {
+
+                if (list.get(i).getDistrict_cn().equals(list.get(j).getDistrict_cn()))
+                {
+                    list.remove(j);
+                }
+
+            }
+        }
+		
 		return list;
 	}
 	
@@ -141,22 +164,23 @@ public class CoolWeatherDB {
 	/**
 	* 从数据库读取某城市下所有县信息。
 	*/
-	public List<County> loadCounty(int cityId){
-		List<County> list = new ArrayList<County>();
-		Cursor cursor = db.query("County", null, "city_id =?",
-				new String[] { String.valueOf(cityId) },null,null,null);
+	public List<City> loadCounty(String district_cn){
+		List<City> list = new ArrayList<City>();
+		Cursor cursor = db.query("City", null, "district_cn =?",
+				new String[] { String.valueOf(district_cn) },null,null,null);
 		if (cursor.moveToNext()) {
 			do {
 				
-				County county = new County();
-				county.setId(cursor.getInt(cursor.getColumnIndex("id")));
-				county.setCityId(cityId);
-				county.setCountyName(cursor.getString(cursor.getColumnIndex("county_name")));
-				county.setCountyCode(cursor.getString(cursor.getColumnIndex("county_code")));
-				list.add(county);
+				City city = new City();
+				city.setId(cursor.getInt(cursor.getColumnIndex("id")));
+				city.setProvince_cn(cursor.getString(cursor.getColumnIndex("province_cn")));
+				city.setDistrict_cn(district_cn);
+				city.setName_cn(cursor.getString(cursor.getColumnIndex("name_cn")));
+				city.setName_en(cursor.getString(cursor.getColumnIndex("name_en")));
+				city.setArea_id(cursor.getInt(cursor.getColumnIndex("area_id")));
+				list.add(city);
 			} while (cursor.moveToNext());
 		}
 		return list;
 	}
-	
 }

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<reulst>  
+  
+  <value>
+  <province>北京</province>
+  <id>001</id>
+  </value>
+ 
+ <value>
+ <province>天津</province>
+ <id>002</id>
+ </value>
+  
+ <value>
+ <province>上海</province>
+ <id>003</id>
+ </value>
+
+ <value>
+ <province>重庆</province>
+ <id>004</id>
+ </value>
+ 
+ <value>
+ <province>河北</province>
+ <id>005</id>
+ </value>
+ 
+ <value>
+ <province>河南</province>
+ <id>006</id>
+ </value>
+ 
+ <value>
+ <province>云南</province>
+ <id>007</id>
+ </value>
+ 
+ <value>
+ <province>辽宁</province>
+  <id>008</id>
+ </value>
+ 
+ <value>
+ <province>黑龙江</province>
+ <id>009</id>
+ </value>
+ 
+ <value>
+ <province>湖南</province>
+ <id>010</id>
+ </value>
+ 
+ <value>
+ <province>安徽</province>
+ <id>011</id>
+ </value>
+ 
+ <value>
+ <province>新疆</province>
+ <id>012</id>
+ </value>
+ 
+ <value>
+ <province>江苏</province>
+ <id>013</id>
+ </value>
+ 
+ <value>
+ <province>浙江</province>
+ <id>014</id>
+ </value>
+ 
+ <value>
+ <province>江西</province>
+ <id>015</id>
+ </value>
+ 
+ <value>
+ <province>湖北</province>
+ <id>016</id>
+ </value>
+ 
+ <value>
+ <province>广西</province>
+ <id>017</id>
+ </value>
+ 
+ <value>
+ <province>甘肃</province>
+ <id>018</id>
+ </value>
+ 
+ <value>
+ <province>山西</province>
+ <id>019</id>
+ </value>
+ 
+ <value>
+ <province>内蒙古</province>
+ <id>020</id>
+ </value>
+
+ <value>
+ <province>陕西</province>
+ <id>021</id>
+ </value>
+ 
+ <value>
+ <province>吉林</province>
+ <id>022</id>
+ </value>
+ 
+ <value>
+ <province>福建</province>
+ <id>023</id>
+ </value>
+ 
+ <value>
+ <province>贵州</province>
+ <id>024</id>
+ </value>
+ 
+ <value>
+ <province>广东</province>
+ <id>025</id>
+ </value>
+ 
+ <value>
+ <province>青海</province>
+ <id>026</id>
+ </value>
+ 
+ <value>
+ <province>西藏</province>
+ <id>027</id>
+ </value>
+ 
+ <value>
+ <province>四川</province>
+ <id>028</id>
+ </value>
+ 
+ <value>
+ <province>宁夏</province>
+ <id>029</id>
+ </value>
+ 
+ <value>
+ <province>西藏</province>
+ <id>030</id>
+ </value>
+ 
+ <value>
+ <province>海南</province>
+ <id>031</id>
+ </value>
+ 
+ <value>
+ <province>台湾</province>
+ <id>032</id>
+ </value>
+ 
+ <value>
+ <province>香港</province>
+ <id>033</id>
+ </value>
+ 
+ <value>
+ <province>澳门</province>
+ <id>034</id>
+ </value>
+</reulst>
