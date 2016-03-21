@@ -1,17 +1,25 @@
 package util;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R.integer;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.JsonWriter;
 import model.City;
 import model.CoolWeatherDB;
 import model.County;
 import model.Province;
+import model.WeatherInfo;
 
 public class Utility {
 
@@ -125,4 +133,57 @@ if (!TextUtils.isEmpty(response)) {
 
 return false;
 }
+
+/**
+*  解析服务器返回的JSON 数据，并将解析出的数据存储到本地。
+*/
+public static void handleWeatherResponse(Context context, String response,City cityInfo) {
+		try {
+		JSONObject jsonObject = new JSONObject(response);
+		JSONObject weatherInfo = jsonObject.getJSONObject("retData").getJSONObject("today");
+		
+		WeatherInfo  info = new WeatherInfo();
+		String dataString =weatherInfo.getString("date");
+		String[] strarray=dataString.split("-"); 
+		  
+		info.setDate(new String(strarray[0]+"年"+strarray[1]+"月"+strarray[2]+"日"));
+		info.setName_cn(cityInfo.getName_cn());
+		info.setArea_id((cityInfo.getArea_id()));
+    	info.setWeek(weatherInfo.getString("week"));
+		info.setCurTemp(weatherInfo.getString("curTemp"));
+		info.setAqi( weatherInfo.getString("aqi"));
+		info.setFengxiang( weatherInfo.getString("fengxiang"));
+		info.setFengli( weatherInfo.getString("fengli"));
+		info.setHightemp( weatherInfo.getString("hightemp"));
+	    info.setLowtemp( weatherInfo.getString("lowtemp"));
+	    info.setType( weatherInfo.getString("type"));
+		saveWeatherInfo(context, info);
+		} catch (JSONException e) {
+		e.printStackTrace();
+		}
+}
+
+
+/**
+*  将服务器返回的所有天气信息存储到SharedPreferences 文件中。
+*/
+public static void saveWeatherInfo(Context context, WeatherInfo info) {
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyy 年M 月d 日",
+//		Locale.CHINA);
+		SharedPreferences.Editor editor = PreferenceManager
+		.getDefaultSharedPreferences(context).edit();
+		editor.putString("date", info.getDate());
+		editor.putString("name_cn", info.getName_cn());
+		editor.putString("week", info.getWeek());
+		editor.putString("curTemp",info.getCurTemp());
+		editor.putString("aqi", info.getAqi());
+		editor.putString("fengxiang", info.getFengxiang());
+		editor.putString("fengli", info.getFengli());
+		editor.putString("lowtemp", info.getLowtemp());
+		editor.putString("hightemp", info.getHightemp());
+		editor.putString("type", info.getType());
+		
+		editor.commit();
+}
+
 }

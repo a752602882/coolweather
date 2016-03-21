@@ -1,6 +1,8 @@
 package model;
 
-public class City {
+import java.io.Serializable;
+
+public class City implements Serializable {
 	private int id;
 	private String  province_cn;
 	private String  district_cn;

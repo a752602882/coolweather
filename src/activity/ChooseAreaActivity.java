@@ -38,6 +38,7 @@ import model.Province;
 import android.R.integer;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.provider.DocumentsContract.Document;
@@ -140,6 +141,8 @@ public class ChooseAreaActivity  extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
 		listView  = (ListView) findViewById(R.id.list_view);
@@ -162,6 +165,13 @@ public class ChooseAreaActivity  extends Activity {
 				}else if(currentLevel==LEVEL_CITY){
 					selectedCity = cityList.get(index);
 					queryCounties();
+				}else if(currentLevel==LEVEL_COUNTY){
+					City city = countyList.get(index);
+					Intent intent = new Intent(ChooseAreaActivity.this,
+					WeatherActivity.class);
+					intent.putExtra("selectCity",city);
+					startActivity(intent);
+					//finish();
 				}
 				
 			}
@@ -224,7 +234,7 @@ public class ChooseAreaActivity  extends Activity {
 		}else if(currentLevel==LEVEL_CITY&&cityList.size()==0) {
 			return;
 		}else{
-			queryFromServer(selectedProvince.getProvinceName(), "city");
+			queryFromServer("cityname","city");
 		}
 	}
 	
@@ -247,14 +257,14 @@ public class ChooseAreaActivity  extends Activity {
 		}
 	}
 	private void queryFromServer(final String code,final String type){
-		String address;
-		if (!TextUtils.isEmpty(code)) 
-			address= "http://apis.baidu.com/apistore/weatherservice/citylist"+code+".xml";
-		else 
-			address = "http://apis.baidu.com/apistore/weatherservice/citylist"+"?"+"cityname="+selectedProvince;
-		
+//		String address;
+//		if (!TextUtils.isEmpty(code)) 
+//			address= "http://apis.baidu.com/apistore/weatherservice/citylist"+code+".xml";
+//		else 
+//			address = "http://apis.baidu.com/apistore/weatherservice/citylist"+"?"+"cityname="+selectedProvince;
+//		
 		showProgressDialog();
-		HttpUtil.sendHttpRequest(code, new HttpCallbackListener() {
+		HttpUtil.sendHttpRequest("http://apis.baidu.com/apistore/weatherservice/citylist",code,selectedProvince.getProvinceName(), new HttpCallbackListener() {
 			
 			@Override
 			public void onFinish(String response) {
@@ -336,5 +346,8 @@ public class ChooseAreaActivity  extends Activity {
 			finish();
 			}
 	}
+	
+	
+	
 	
 }
