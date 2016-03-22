@@ -11,16 +11,21 @@ import util.Utility;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class WeatherActivity extends Activity implements OnClickListener{
@@ -34,7 +39,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	/**
 	* 用于显示发布时间
 	*/
-	private TextView publishText;
+	private ProgressBar icon;
 	/**
 	* 用于显示天气描述信息
 	*/
@@ -65,6 +70,7 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	* 选中的城市
 	*/
 	private City selectCity;
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,33 +82,72 @@ public class WeatherActivity extends Activity implements OnClickListener{
 		// 初始化各控件
 		weatherInfoLayout = (LinearLayout) findViewById(R.id.weather_info_layout);
 		cityNameText = (TextView) findViewById(R.id.city_name);
-		publishText = (TextView) findViewById(R.id.publish_text);
+		icon = (ProgressBar) findViewById(R.id.icon);
 		weatherDespText = (TextView) findViewById(R.id.weather_desp);
 		temp1Text = (TextView) findViewById(R.id.temp1);
 		temp2Text = (TextView) findViewById(R.id.temp2);
 		currentDateText = (TextView) findViewById(R.id.current_date);
 		switchCity = (Button) findViewById(R.id.switch_city);
 		refreshWeather = (Button) findViewById(R.id.refresh_weather);
+		switchCity.setOnClickListener(this);
+		refreshWeather.setOnClickListener(this);
+		
 		//Intent countyCode = getIntent()。getSerializable("City");
 		Intent intent = this.getIntent(); 
 		selectCity=(City)intent.getSerializableExtra("selectCity");
-		String countyCode = Integer.toString(selectCity.getArea_id());
+		String countyCode = null;
 		
-		if (!TextUtils.isEmpty(countyCode)) {
+		if(selectCity!=null){
+		 countyCode = Integer.toString(selectCity.getArea_id());
+		 }
+		
+		
+		SharedPreferences prefs = PreferenceManager.
+				getDefaultSharedPreferences(this);
+		
+		String area_id =prefs.getString("area_id", "");
+		
+		if (!TextUtils.isEmpty(area_id)) {
 			// 有县级代号时就去查询天气
-			publishText.setText("同步中。。");
+		
 			weatherInfoLayout.setVisibility(View.INVISIBLE);
 			cityNameText.setVisibility(View.INVISIBLE);
-			queryWeatherCode(countyCode);
 		}
+			if(countyCode!=null ){
+				 queryWeatherCode(countyCode);
+			}else{
+				 queryWeatherCode(area_id);
+			}
+		  
+		
 		
 	}
 	
 	
 	@Override
-	public void onClick(View arg0) {
+	public void onClick(View v) {
 		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.switch_city:
+			Intent intent = new Intent(this, ChooseAreaActivity.class);
+			intent.putExtra("from_weather_activity", true);
+			startActivity(intent);
+			finish();
+			break;
+		case R.id.refresh_weather:
 		
+			SharedPreferences prefs = PreferenceManager.
+			getDefaultSharedPreferences(this);
+			String area_id = prefs.getString("area_id", "");
+			if (!TextUtils.isEmpty(area_id)) {
+			queryWeatherCode(area_id);
+			}
+			break;
+			
+			
+		default:
+			break;
+		}
 	}
 	
 	/**
@@ -177,6 +222,48 @@ public class WeatherActivity extends Activity implements OnClickListener{
 	currentDateText.setText(prefs.getString("date", ""));
 	weatherInfoLayout.setVisibility(View.VISIBLE);
 	cityNameText.setVisibility(View.VISIBLE);
+	
+	
 	}
+	
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+   @Override
+public boolean onKeyDown(int keyCode, KeyEvent event) {
+	// TODO Auto-generated method stub
+	   if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) { 
+           dialog();
+	   }
+        return false;
+	
+}
+   protected void dialog() { 
+       AlertDialog.Builder builder = new Builder(WeatherActivity.this); 
+       builder.setMessage("确定要退出吗?"); 
+       builder.setTitle("提示"); 
+       builder.setPositiveButton("确认", 
+               new android.content.DialogInterface.OnClickListener() { 
+             
 
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					// TODO Auto-generated method stub
+				
+					WeatherActivity.this.finish(); 
+				} 
+               }); 
+               builder.setNegativeButton("取消", 
+               new android.content.DialogInterface.OnClickListener() { 
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) { 
+                       dialog.dismiss(); 
+                   } 
+               }); 
+       builder.create().show(); 
+   } 
 }

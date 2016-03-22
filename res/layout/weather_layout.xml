@@ -24,6 +24,15 @@ android:orientation="vertical" >
         android:textColor="#fff"
         android:textSize="24sp"
         />
+	<Button
+		android:id="@+id/refresh_weather"
+		android:layout_width="30dp"
+		android:layout_height="30dp"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		
+		android:layout_marginRight="10dp"
+		android:background="@drawable/refresh" />
     </RelativeLayout>
     
     
@@ -32,17 +41,8 @@ android:orientation="vertical" >
         android:layout_height="0dp"
         android:layout_weight="1"
         android:background="#27A5F9"
-        >  
-     <TextView 
-         android:id="@+id/publish_text"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:layout_alignParentRight="true"
-         android:layout_marginRight="10dp"
-         android:layout_marginTop="10dp" 
-         android:textColor="#fff"
-         android:textSize="18sp"
-         />   
+        > 
+         
         <LinearLayout
             android:id="@+id/weather_info_layout"
             android:layout_width="wrap_content"
@@ -101,16 +101,18 @@ android:orientation="vertical" >
 			android:textSize="40sp" />
          
          </LinearLayout>
-        </LinearLayout> 
-        
-        <Button
-			android:id="@+id/refresh_weather"
-			android:layout_width="30dp"
-			android:layout_height="30dp"
-			android:layout_alignParentRight="true"
-			android:layout_centerVertical="true"
-			android:layout_marginRight="10dp"
-			android:background="@drawable/refresh" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="18dp"
+            android:indeterminateDrawable="@anim/animdraw2"
+            android:indeterminateDuration="1500" />
         
     </RelativeLayout>
    

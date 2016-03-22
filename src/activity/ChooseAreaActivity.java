@@ -37,19 +37,29 @@ import model.Province;
 
 import android.R.integer;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.DocumentsContract.Document;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +70,7 @@ public class ChooseAreaActivity  extends Activity {
     public static final int LEVEL_COUNTY=2;
     
     
-    private  ProgressDialog progressDialog;
+    private  Dialog progressDialog;
     private  TextView  titleText;
     private  ListView  listView;
     private  ArrayAdapter<String> adapter;
@@ -87,6 +97,12 @@ public class ChooseAreaActivity  extends Activity {
     */
     private int currentLevel;
 	private Object context;
+	
+	/**
+	*  是否从WeatherActivity 中跳转过来。
+	*/
+	private boolean isFromWeatherActivity;
+	
     
 	/**
 	* 查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询。
@@ -142,9 +158,21 @@ public class ChooseAreaActivity  extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
+		isFromWeatherActivity = getIntent().getBooleanExtra("from_weather_activity", false);
 		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		if (prefs.getBoolean("city_selected", false)&& !isFromWeatherActivity) {
+			Intent intent = new Intent(this, WeatherActivity.class);
+			startActivity(intent);
+			finish();
+			return;
+		}
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.choose_area);
+		
+		
+		
+		
 		listView  = (ListView) findViewById(R.id.list_view);
 		titleText =  (TextView) findViewById(R.id.title_text);
 		
@@ -319,9 +347,9 @@ public class ChooseAreaActivity  extends Activity {
 	*/
 	private void showProgressDialog() {
 	if (progressDialog ==null) {
-		progressDialog= new ProgressDialog(this);
-		progressDialog.setMessage("正在加载。。。");
-		progressDialog.setCanceledOnTouchOutside(false);
+		progressDialog= (Dialog) ChooseAreaActivity.createLoadingDialog(this, "正在加载。。");
+		//progressDialog.setMessage("正在加载。。。");
+		//progressDialog.setCanceledOnTouchOutside(false);
 	   }
 	  progressDialog.show();
 	}
@@ -343,11 +371,44 @@ public class ChooseAreaActivity  extends Activity {
 			} else if (currentLevel == LEVEL_CITY) {
 			queryProvinces();
 			} else {
-			finish();
+				if (isFromWeatherActivity) {
+					Intent intent = new Intent(this, WeatherActivity.class);
+					startActivity(intent);
+				}
+				finish();
 			}
 	}
 	
-	
+	/** 
+     * 得到自定义的progressDialog 
+     * @param context 
+     * @param msg 
+     * @return 
+     */  
+    public static Dialog createLoadingDialog(Context context, String msg) {  
+  
+        LayoutInflater inflater = LayoutInflater.from(context);  
+        View v = inflater.inflate(R.layout.loading_dialog, null);// 得到加载view  
+        LinearLayout layout = (LinearLayout) v.findViewById(R.id.dialog_view);// 加载布局  
+        // main.xml中的ImageView  
+        ProgressBar spaceshipImage = (ProgressBar) v.findViewById(R.id.img);  
+        TextView tipTextView = (TextView) v.findViewById(R.id.tipTextView);// 提示文字  
+        // 加载动画  
+        Animation hyperspaceJumpAnimation = AnimationUtils.loadAnimation(  
+                context, R.anim.animdraw);  
+        // 使用ImageView显示动画  
+        spaceshipImage.startAnimation(hyperspaceJumpAnimation);  
+        tipTextView.setText(msg);// 设置加载信息  
+  
+        Dialog loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog  
+  
+        loadingDialog.setCancelable(false);// 不可以用“返回键”取消  
+        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(  
+                LinearLayout.LayoutParams.FILL_PARENT,  
+                LinearLayout.LayoutParams.FILL_PARENT));// 设置布局  
+        return loadingDialog;  
+  
+    }  
 	
 	
 }

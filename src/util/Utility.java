@@ -141,14 +141,19 @@ public static void handleWeatherResponse(Context context, String response,City c
 		try {
 		JSONObject jsonObject = new JSONObject(response);
 		JSONObject weatherInfo = jsonObject.getJSONObject("retData").getJSONObject("today");
+		JSONObject weatherInfo_all = jsonObject.getJSONObject("retData");
+		
+		
 		
 		WeatherInfo  info = new WeatherInfo();
 		String dataString =weatherInfo.getString("date");
 		String[] strarray=dataString.split("-"); 
 		  
 		info.setDate(new String(strarray[0]+"Äê"+strarray[1]+"ÔÂ"+strarray[2]+"ÈÕ"));
-		info.setName_cn(cityInfo.getName_cn());
-		info.setArea_id((cityInfo.getArea_id()));
+		
+		info.setName_cn(weatherInfo_all.getString("city"));
+		info.setArea_id(weatherInfo_all.getString("cityid"));
+		
     	info.setWeek(weatherInfo.getString("week"));
 		info.setCurTemp(weatherInfo.getString("curTemp"));
 		info.setAqi( weatherInfo.getString("aqi"));
@@ -174,6 +179,7 @@ public static void saveWeatherInfo(Context context, WeatherInfo info) {
 		.getDefaultSharedPreferences(context).edit();
 		editor.putString("date", info.getDate());
 		editor.putString("name_cn", info.getName_cn());
+		editor.putString("area_id", info.getArea_id());
 		editor.putString("week", info.getWeek());
 		editor.putString("curTemp",info.getCurTemp());
 		editor.putString("aqi", info.getAqi());
@@ -182,7 +188,7 @@ public static void saveWeatherInfo(Context context, WeatherInfo info) {
 		editor.putString("lowtemp", info.getLowtemp());
 		editor.putString("hightemp", info.getHightemp());
 		editor.putString("type", info.getType());
-		
+		editor.putBoolean("city_selected", true);
 		editor.commit();
 }
 
